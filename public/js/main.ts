@@ -2,6 +2,21 @@
 const COLORS = ["#fafafa", "#c8c8c8", "#969696", "#646464", "#000000"];
 const STORAGE_URL = "http://localhost:3000/game";
 
+
+interface SaveItem {
+   x: number,
+   y: number,
+   color: string
+}
+
+interface Response {
+   state: string
+}
+
+
+
+
+
 $(() => {
    let parent = $("#board");
    // creating divs
@@ -44,9 +59,6 @@ $(() => {
 
 
    // loading saved state
-   interface Response {
-      state: string
-   }
 
    $('#loadBtn').click((e) => {
       e.preventDefault();
@@ -65,9 +77,8 @@ $(() => {
 
    // prevent form sending
    $('form').submit(e => e.preventDefault());
-
-
 });
+
 
 
 
@@ -82,12 +93,6 @@ function CycleColor(item: HTMLDivElement) {
    setColor(item, newColorId);
 }
 
-interface SaveItem {
-   x: number,
-   y: number,
-   color: string
-}
-
 function setColor(item: HTMLDivElement, newColorId: number) {
    let currColor = COLORS[newColorId];
    // save color
@@ -95,10 +100,16 @@ function setColor(item: HTMLDivElement, newColorId: number) {
    item.style.backgroundColor = currColor;
 }
 
+
+
+// Board saving and loading 
+
+
 function boardToJSONstring(parent: JQuery<HTMLElement>): string {
    let saveObject: SaveItem[] = [];
    parent.children().each((index, child) => {
       let color = child.getAttribute('data-color') || "-1";
+      // prepare save object
       let saveItem: SaveItem = {
          x: index % 10,
          y: Math.floor(index / 10),
@@ -106,7 +117,6 @@ function boardToJSONstring(parent: JQuery<HTMLElement>): string {
       }
       saveObject.push(saveItem);
    });
-
    return JSON.stringify(saveObject);
 }
 
@@ -119,6 +129,12 @@ function loadBoardStateFromObj(saveState: SaveItem[], parent: JQuery<HTMLElement
    });
 }
 
+
+
+
+// utils
+
+
 function convert2Dto1Dindex(x: number, y: number, arrayWidth = 10): number {
    return y * arrayWidth + x;
 }
@@ -126,3 +142,4 @@ function convert2Dto1Dindex(x: number, y: number, arrayWidth = 10): number {
 function colorToColorID(color: string): number {
    return COLORS.indexOf(color);
 }
+
