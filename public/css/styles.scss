@@ -1,0 +1,29 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+#board {
+   // make it square
+   // width: 50vw;
+   // height: 50vw;
+   position: relative;
+   top:10px;
+   left: 20%;
+   display: grid;
+   width:fit-content;
+   grid-template-rows: repeat(10, 1fr);
+   grid-template-columns: repeat(10, 1fr);
+   grid-gap: 0;
+}
+
+.item {
+   width:3em;
+   height: 3em;
+   background-color: red;
+   cursor: pointer;
+   &:hover{
+      background-color: tan;
+   }
+}
