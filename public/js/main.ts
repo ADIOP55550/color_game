@@ -25,7 +25,7 @@ $(() => {
    }
 
 
-   // saving
+   // saving state to server
    $('#saveBtn').click((e) => {
       e.preventDefault();
       let saveData = boardToJSONstring(parent);
@@ -43,26 +43,30 @@ $(() => {
    });
 
 
-   // loading
+   // loading saved state
+   interface Response {
+      state: string
+   }
+
    $('#loadBtn').click((e) => {
       e.preventDefault();
 
       $.ajax({
          contentType: "application/json"
       });
-
-      interface Response {
-         state: string
-      }
-
-      $.getJSON(STORAGE_URL, data => {
+      $.getJSON(STORAGE_URL, (data: Response) => {
          let state = JSON.parse(data.state) as SaveItem[];
          console.log(state);
+         // Display
+         loadBoardStateFromObj(state, parent);
       })
    });
 
+
    // prevent form sending
    $('form').submit(e => e.preventDefault());
+
+
 });
 
 
@@ -75,7 +79,7 @@ function CycleColor(item: HTMLDivElement) {
    // loop in COLORS
    let newColorId = (prevColorId + 1) >= COLORS.length ? 0 : (prevColorId + 1);
 
-   setColor(newColorId, item);
+   setColor(item, newColorId);
 }
 
 interface SaveItem {
@@ -84,7 +88,7 @@ interface SaveItem {
    color: string
 }
 
-function setColor(newColorId: number, item: HTMLDivElement) {
+function setColor(item: HTMLDivElement, newColorId: number) {
    let currColor = COLORS[newColorId];
    // save color
    item.setAttribute('data-color', newColorId.toString());
@@ -108,11 +112,17 @@ function boardToJSONstring(parent: JQuery<HTMLElement>): string {
 
 function loadBoardStateFromObj(saveState: SaveItem[], parent: JQuery<HTMLElement>): void {
    const children = parent.children();
+
+   // assign colors to children
    children.each((i, child) => {
-      child.setAttribute('data-color')
-   })
+      setColor(child as HTMLDivElement, colorToColorID(saveState[i].color));
+   });
 }
 
 function convert2Dto1Dindex(x: number, y: number, arrayWidth = 10): number {
    return y * arrayWidth + x;
+}
+
+function colorToColorID(color: string): number {
+   return COLORS.indexOf(color);
 }

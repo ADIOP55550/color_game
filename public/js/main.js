@@ -19,7 +19,7 @@ $(function () {
         item.classList.add("item");
         parent.append(item);
     }
-    // saving
+    // saving state to server
     $('#saveBtn').click(function (e) {
         e.preventDefault();
         var saveData = boardToJSONstring(parent);
@@ -32,7 +32,6 @@ $(function () {
             console.log(result);
         });
     });
-    // loading
     $('#loadBtn').click(function (e) {
         e.preventDefault();
         $.ajax({
@@ -41,6 +40,8 @@ $(function () {
         $.getJSON(STORAGE_URL, function (data) {
             var state = JSON.parse(data.state);
             console.log(state);
+            // Display
+            loadBoardStateFromObj(state, parent);
         });
     });
     // prevent form sending
@@ -52,9 +53,9 @@ function CycleColor(item) {
     var prevColorId = parseInt(prevColor);
     // loop in COLORS
     var newColorId = (prevColorId + 1) >= COLORS.length ? 0 : (prevColorId + 1);
-    setColor(newColorId, item);
+    setColor(item, newColorId);
 }
-function setColor(newColorId, item) {
+function setColor(item, newColorId) {
     var currColor = COLORS[newColorId];
     // save color
     item.setAttribute('data-color', newColorId.toString());
@@ -75,11 +76,15 @@ function boardToJSONstring(parent) {
 }
 function loadBoardStateFromObj(saveState, parent) {
     var children = parent.children();
+    // assign colors to children
     children.each(function (i, child) {
-        child.setAttribute('data-color');
+        setColor(child, colorToColorID(saveState[i].color));
     });
 }
 function convert2Dto1Dindex(x, y, arrayWidth) {
     if (arrayWidth === void 0) { arrayWidth = 10; }
     return y * arrayWidth + x;
+}
+function colorToColorID(color) {
+    return COLORS.indexOf(color);
 }
