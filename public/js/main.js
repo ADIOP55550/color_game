@@ -32,6 +32,7 @@ $(function () {
             console.log(result);
         });
     });
+    // loading saved state
     $('#loadBtn').click(function (e) {
         e.preventDefault();
         $.ajax({
@@ -61,10 +62,12 @@ function setColor(item, newColorId) {
     item.setAttribute('data-color', newColorId.toString());
     item.style.backgroundColor = currColor;
 }
+// Board saving and loading 
 function boardToJSONstring(parent) {
     var saveObject = [];
     parent.children().each(function (index, child) {
         var color = child.getAttribute('data-color') || "-1";
+        // prepare save object
         var saveItem = {
             x: index % 10,
             y: Math.floor(index / 10),
@@ -81,6 +84,7 @@ function loadBoardStateFromObj(saveState, parent) {
         setColor(child, colorToColorID(saveState[i].color));
     });
 }
+// utils
 function convert2Dto1Dindex(x, y, arrayWidth) {
     if (arrayWidth === void 0) { arrayWidth = 10; }
     return y * arrayWidth + x;
