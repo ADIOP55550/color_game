@@ -2,28 +2,55 @@
    margin: 0;
    padding: 0;
    box-sizing: border-box;
+   font-family: sans-serif;
 }
 
 #board {
    // make it square
    // width: 50vw;
    // height: 50vw;
+   border: 2px black dotted;
    position: relative;
-   top:10px;
+   top: 10px;
    left: 20%;
    display: grid;
-   width:fit-content;
+   width: fit-content;
    grid-template-rows: repeat(10, 1fr);
    grid-template-columns: repeat(10, 1fr);
    grid-gap: 0;
 }
 
 .item {
-   width:3em;
+   width: 3em;
    height: 3em;
    background-color: red;
    cursor: pointer;
-   &:hover{
+
+   &:hover {
       background-color: tan;
+   }
+}
+
+form {
+   margin: auto;
+   width: fit-content;
+
+   #saveBtn,
+   #loadBtn {
+      border: 0;
+      outline: 0;
+      width: 300px;
+      padding: 1em;
+      margin: 1em;
+      font-size: 1.4em;
+      cursor: pointer;
+   }
+
+   #saveBtn:hover {
+      background-color: aquamarine;
+   }
+
+   #loadBtn:hover {
+      background-color: darksalmon;
    }
 }

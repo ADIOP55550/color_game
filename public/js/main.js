@@ -1,5 +1,6 @@
 "use strict";
 var COLORS = ["#fafafa", "#c8c8c8", "#969696", "#646464", "#000000"];
+var STORAGE_URL = "http://localhost:3000/game";
 $(function () {
     var parent = $("#board");
     // creating divs
@@ -18,15 +19,67 @@ $(function () {
         item.classList.add("item");
         parent.append(item);
     }
+    // saving
+    $('#saveBtn').click(function (e) {
+        e.preventDefault();
+        var saveData = boardToJSONstring(parent);
+        console.log(saveData);
+        // Send state
+        $.ajax({
+            contentType: "application/json"
+        });
+        $.post(STORAGE_URL, { state: saveData }, function (result) {
+            console.log(result);
+        });
+    });
+    // loading
+    $('#loadBtn').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            contentType: "application/json"
+        });
+        $.getJSON(STORAGE_URL, function (data) {
+            var state = JSON.parse(data.state);
+            console.log(state);
+        });
+    });
+    // prevent form sending
+    $('form').submit(function (e) { return e.preventDefault(); });
 });
 function CycleColor(item) {
     // get color
     var prevColor = item.getAttribute('data-color') || "-1";
     var prevColorId = parseInt(prevColor);
     // loop in COLORS
-    var currColorId = (prevColorId + 1) >= COLORS.length ? 0 : (prevColorId + 1);
-    var currColor = COLORS[currColorId];
+    var newColorId = (prevColorId + 1) >= COLORS.length ? 0 : (prevColorId + 1);
+    setColor(newColorId, item);
+}
+function setColor(newColorId, item) {
+    var currColor = COLORS[newColorId];
     // save color
-    item.setAttribute('data-color', currColorId.toString());
+    item.setAttribute('data-color', newColorId.toString());
     item.style.backgroundColor = currColor;
+}
+function boardToJSONstring(parent) {
+    var saveObject = [];
+    parent.children().each(function (index, child) {
+        var color = child.getAttribute('data-color') || "-1";
+        var saveItem = {
+            x: index % 10,
+            y: Math.floor(index / 10),
+            color: COLORS[parseInt(color)]
+        };
+        saveObject.push(saveItem);
+    });
+    return JSON.stringify(saveObject);
+}
+function loadBoardStateFromObj(saveState, parent) {
+    var children = parent.children();
+    children.each(function (i, child) {
+        child.setAttribute('data-color');
+    });
+}
+function convert2Dto1Dindex(x, y, arrayWidth) {
+    if (arrayWidth === void 0) { arrayWidth = 10; }
+    return y * arrayWidth + x;
 }
